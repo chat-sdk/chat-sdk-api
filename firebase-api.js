@@ -136,10 +136,13 @@ module.exports = (databaseURL) => {
     return db.ref(root + '/users/' + uid + '/meta').set(meta)
   }
 
-  const deleteUser = (root, uid) => {
-    // await deleteThreadUser(root, tid, uid)
-    // return db.ref(root + '/users/' + uid).remove()
-    return Promise.reject(500)
+  const deleteUser = async (root, uid) => {
+    const threads = await fetchUserThreads(root, uid)
+    const tids = threads && Object.keys(threads)
+    if (tids && tids.length > 0) {
+      await Promise.all(tids.map(tid => db.ref(root + '/threads/' + tid + '/users/' + uid).remove()))
+    }
+    return db.ref(root + '/users/' + uid).remove()
   }
 
   // Moderation
