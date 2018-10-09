@@ -6,22 +6,22 @@ const express = require('express')
 const http = require('http')
 const ip = require('ip')
 const cors = require('./cors')
-const push = require('./push')
-
-// Setup Firebase and APIs
-const firebaseAPI = require('./firebase/api')()
+const config = require('./config')
 
 // Setup routes with the Firebase API
-const users = require('./routes/users')(firebaseAPI.users)
-const threads = require('./routes/threads')(firebaseAPI.threads)
-const moderation = require('./routes/moderation')(firebaseAPI.moderation)
+const users = require('./routes/users')(config.api.users)
+const threads = require('./routes/threads')(config.api.threads)
+const moderation = require('./routes/moderation')(config.api.moderation)
 
 const app = express()
 app.use(compression())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cors())
-app.use('/push', push(firebaseAPI))
+
+if (config.pushEnabled) {
+  app.use('/push', require('./push')(config.api))
+}
 
 const routes = (root = ':root') => {
   return [
