@@ -6,6 +6,7 @@ const express = require('express')
 const http = require('http')
 const ip = require('ip')
 const cors = require('./cors')
+const push = require('./push')
 
 // Setup Firebase and APIs
 const firebaseAPI = require('./firebase/api')()
@@ -20,6 +21,7 @@ app.use(compression())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cors())
+app.use('/push', push(firebaseAPI))
 
 const routes = (root = ':root') => {
   return [

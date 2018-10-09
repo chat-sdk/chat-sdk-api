@@ -26,6 +26,7 @@
     "ip": "^1.1.5",
     "rxjs": "^6.3.3",
     "rxjs-compat": "^6.3.3",
+    "web-push": "^3.3.3"
   },
   "devDependencies": {
     "nodemon": "^1.18.4"
