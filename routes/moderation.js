@@ -1,40 +1,43 @@
 'use strict'
 
-const fetchFlaggedMessages = api => (req, res, next) => {
-  api.fetchFlaggedMessages(req.params.root)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getFlaggedMessages = api => (req, res) => {
+  api.getFlaggedMessages(req.params.root)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchFlaggedMessage = api => (req, res, next) => {
-  api.fetchFlaggedMessage(req.params.root, req.params.mid)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getFlaggedMessage = api => (req, res) => {
+  api.getFlaggedMessage(req.params.root, req.params.mid)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const flagMessage = api => (req, res, next) => {
+const flagMessage = api => (req, res) => {
   api.flagMessage(req.params.root, req.params.tid, req.params.mid)
-    .then(() => (res.sendStatus(200), next()))
-    .catch(() => (res.sendStatus(500), next()))
+    .then(() => res.sendStatus(200))
+    .catch(() => res.sendStatus(500))
 }
 
-const unflagMessage = api => (req, res, next) => {
+const unflagMessage = api => (req, res) => {
   api.unflagMessage(req.params.root, req.params.mid)
-    .then(() => (res.sendStatus(200), next()))
-    .catch(() => (res.sendStatus(500), next()))
+    .then(() => res.sendStatus(200))
+    .catch(() => res.sendStatus(500))
 }
 
-const deleteFlaggedMessage = api => (req, res, next) => {
+const deleteFlaggedMessage = api => (req, res) => {
   api.deleteFlaggedMessage(req.params.root, req.params.mid)
-    .then(() => (res.sendStatus(200), next()))
-    .catch(() => (res.sendStatus(500), next()))
+    .then(() => res.sendStatus(200))
+    .catch(() => res.sendStatus(500))
 }
-
 
 module.exports = api => {
   return {
-    fetchFlaggedMessages: fetchFlaggedMessages(api),
-    fetchFlaggedMessage: fetchFlaggedMessage(api),
+    getFlaggedMessages: getFlaggedMessages(api),
+    getFlaggedMessage: getFlaggedMessage(api),
     flagMessage: flagMessage(api),
     unflagMessage: unflagMessage(api),
     deleteFlaggedMessage: deleteFlaggedMessage(api)

@@ -1,48 +1,68 @@
 'use strict'
 
-const fetchUsers = api => (req, res, next) => {
-  api.fetchUsers(req.params.root)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getOnline = api => (req, res) => {
+  api.getOnline(req.params.root)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchUser = api => (req, res, next) => {
-  api.fetchUser(req.params.root, req.params.uid)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getUsers = api => (req, res) => {
+  api.getUsers(req.params.root)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchUserMeta = api => (req, res, next) => {
-  api.fetchUserMeta(req.params.root, req.params.uid)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getUser = api => (req, res) => {
+  api.getUser(req.params.root, req.params.uid)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchUserMetaValue = api => (req, res, next) => {
-  api.fetchUserMetaValue(req.params.root, req.params.uid, req.params.index)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getUserMeta = api => (req, res) => {
+  api.getUserMeta(req.params.root, req.params.uid)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchUserThreads = api => (req, res, next) => {
-  api.fetchUserThreads(req.params.root, req.params.uid)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getUserMetaValue = api => (req, res) => {
+  api.getUserMetaValue(req.params.root, req.params.uid, req.params.index)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchUsersByMetaValue = api => (req, res, next) => {
-  api.fetchUsersByMetaValue(req.params.root, req.params.index, req.params.query)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getUserThreads = api => (req, res) => {
+  api.getUserThreads(req.params.root, req.params.uid)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const setUserMeta = api => (req, res, next) => {
+const getUsersByMetaValue = api => (req, res) => {
+  api.getUsersByMetaValue(req.params.root, req.params.index, req.params.query)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
+}
+
+const setUserMeta = api => (req, res) => {
   api.setUserMeta(req.params.root, req.params.uid, req.body)
     .then(() => (res.sendStatus(200), next()))
     .catch(() => (res.sendStatus(500), next()))
 }
 
-const deleteUser = api => (req, res, next) => {
+const deleteUser = api => (req, res) => {
   api.deleteUser(req.params.root, req.params.uid)
     .then(() => (res.sendStatus(200), next()))
     .catch(() => (res.sendStatus(500), next()))
@@ -50,12 +70,13 @@ const deleteUser = api => (req, res, next) => {
 
 module.exports = api => {
   return {
-    fetchUsers: fetchUsers(api),
-    fetchUser: fetchUser(api),
-    fetchUserMeta: fetchUserMeta(api),
-    fetchUserMetaValue: fetchUserMetaValue(api),
-    fetchUserThreads: fetchUserThreads(api),
-    fetchUsersByMetaValue: fetchUsersByMetaValue(api),
+    getOnline: getOnline(api),
+    getUsers: getUsers(api),
+    getUser: getUser(api),
+    getUserMeta: getUserMeta(api),
+    getUserMetaValue: getUserMetaValue(api),
+    getUserThreads: getUserThreads(api),
+    getUsersByMetaValue: getUsersByMetaValue(api),
     setUserMeta: setUserMeta(api),
     deleteUser: deleteUser(api)
   }

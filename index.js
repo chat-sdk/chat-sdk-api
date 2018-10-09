@@ -5,12 +5,15 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const http = require('http')
 const ip = require('ip')
-
 const cors = require('./cors')
-const api = require('./firebase-api')()
-const users = require('./routes/users')(api)
-const threads = require('./routes/threads')(api)
-const moderation = require('./routes/moderation')(api)
+
+// Setup Firebase and APIs
+const firebaseAPI = require('./firebase/api')()
+
+// Setup routes with the Firebase API
+const users = require('./routes/users')(firebaseAPI.users)
+const threads = require('./routes/threads')(firebaseAPI.threads)
+const moderation = require('./routes/moderation')(firebaseAPI.moderation)
 
 const app = express()
 app.use(compression())
@@ -18,48 +21,42 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cors())
 
-const fetchOnline = (req, res, next) => {
-  api.fetchOnline(req.params.root)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
-}
-
 const routes = (root = ':root') => {
   return [
-    { method: 'GET', path: '/' + root + '/online', handler: fetchOnline },
     // Moderation
-    { method: 'GET', path: '/' + root + '/flagged-messages', handler: moderation.fetchFlaggedMessages },
-    { method: 'GET', path: '/' + root + '/flagged-messages/:mid', handler: moderation.fetchFlaggedMessage },
+    { method: 'GET', path: '/' + root + '/flagged-messages', handler: moderation.getFlaggedMessages },
+    { method: 'GET', path: '/' + root + '/flagged-messages/:mid', handler: moderation.getFlaggedMessage },
     { method: 'DELETE', path: '/' + root + '/flagged-messages/:mid', handler: moderation.deleteFlaggedMessage },
     { method: 'PUT', path: '/' + root + '/flag-message/:tid/:mid', handler: moderation.flagMessage },
     { method: 'PUT', path: '/' + root + '/unflag-message/:mid', handler: moderation.unflagMessage },
     // Threads
-    { method: 'GET', path: '/' + root + '/threads', handler: threads.fetchThreads },
-    { method: 'GET', path: '/' + root + '/public-threads', handler: threads.fetchPublicThreads },
-    { method: 'GET', path: '/' + root + '/threads/:tid', handler: threads.fetchThread },
+    { method: 'GET', path: '/' + root + '/threads', handler: threads.getThreads },
+    { method: 'GET', path: '/' + root + '/public-threads', handler: threads.getPublicThreads },
+    { method: 'GET', path: '/' + root + '/threads/:tid', handler: threads.getThread },
     { method: 'DELETE', path: '/' + root + '/threads/:tid', handler: threads.deleteThread },
-    { method: 'GET', path: '/' + root + '/threads/:tid/meta', handler: threads.fetchThreadMeta },
+    { method: 'GET', path: '/' + root + '/threads/:tid/meta', handler: threads.getThreadMeta },
     { method: 'POST', path: '/' + root + '/threads/:tid/meta', handler: threads.setThreadMeta },
-    { method: 'GET', path: '/' + root + '/threads/:tid/meta/:index', handler: threads.fetchThreadMetaValue },
-    { method: 'GET', path: '/' + root + '/threads/:tid/messages', handler: threads.fetchThreadMessages },
-    { method: 'GET', path: '/' + root + '/threads/:tid/messages/:mid', handler: threads.fetchThreadMessage },
+    { method: 'GET', path: '/' + root + '/threads/:tid/meta/:index', handler: threads.getThreadMetaValue },
+    { method: 'GET', path: '/' + root + '/threads/:tid/messages', handler: threads.getThreadMessages },
+    { method: 'GET', path: '/' + root + '/threads/:tid/messages/:mid', handler: threads.getThreadMessage },
     { method: 'DELETE', path: '/' + root + '/threads/:tid/messages/:mid', handler: threads.deleteThreadMessage },
-    { method: 'GET', path: '/' + root + '/threads/:tid/users', handler: threads.fetchThreadUsers },
-    { method: 'GET', path: '/' + root + '/threads/:tid/users/:uid', handler: threads.fetchThreadUser },
+    { method: 'GET', path: '/' + root + '/threads/:tid/users', handler: threads.getThreadUsers },
+    { method: 'GET', path: '/' + root + '/threads/:tid/users/:uid', handler: threads.getThreadUser },
     { method: 'DELETE', path: '/' + root + '/threads/:tid/users/:uid', handler: threads.deleteThreadUser },
     // Users
-    { method: 'GET', path: '/' + root + '/users', handler: users.fetchUsers },
-    { method: 'GET', path: '/' + root + '/users/:uid', handler: users.fetchUser },
+    { method: 'GET', path: '/' + root + '/online', handler: users.getOnline },
+    { method: 'GET', path: '/' + root + '/users', handler: users.getUsers },
+    { method: 'GET', path: '/' + root + '/users/:uid', handler: users.getUser },
     { method: 'DELETE', path: '/' + root + '/users/:uid', handler: users.deleteUser },
-    { method: 'GET', path: '/' + root + '/users/:uid/meta', handler: users.fetchUserMeta },
+    { method: 'GET', path: '/' + root + '/users/:uid/meta', handler: users.getUserMeta },
     { method: 'POST', path: '/' + root + '/users/:uid/meta', handler: users.setUserMeta },
-    { method: 'GET', path: '/' + root + '/users/:uid/meta/:index', handler: users.fetchUserMetaValue },
-    { method: 'GET', path: '/' + root + '/users/:uid/threads', handler: users.fetchUserThreads },
-    { method: 'GET', path: '/' + root + '/users/by/:index/:query', handler: users.fetchUsersByMetaValue },
+    { method: 'GET', path: '/' + root + '/users/:uid/meta/:index', handler: users.getUserMetaValue },
+    { method: 'GET', path: '/' + root + '/users/:uid/threads', handler: users.getUserThreads },
+    { method: 'GET', path: '/' + root + '/users/by/:index/:query', handler: users.getUsersByMetaValue },
   ]
 }
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.json(routes().map(r => ({ method: r.method, path: r.path })))
 })
 

@@ -1,94 +1,114 @@
 'use strict'
 
-const fetchThreads = api => (req, res, next) => {
-  api.fetchThreads(req.params.root)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const { first } = require('rxjs/operators')
+
+const getThreads = api => (req, res) => {
+  api.getThreads(req.params.root)
+    .first().subscribe(
+      data => data && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchPublicThreads = api => (req, res, next) => {
-  api.fetchPublicThreads(req.params.root)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getPublicThreads = api => (req, res) => {
+  api.getPublicThreads(req.params.root)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchThread = api => (req, res, next) => {
-  api.fetchThread(req.params.root, req.params.tid)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getThread = api => (req, res) => {
+  api.getThread(req.params.root, req.params.tid)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchThreadMeta = api => (req, res, next) => {
-  api.fetchThreadMeta(req.params.root, req.params.tid)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getThreadMeta = api => (req, res) => {
+  api.getThreadMeta(req.params.root, req.params.tid)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchThreadMetaValue = api => (req, res, next) => {
-  api.fetchThreadMetaValue(req.params.root, req.params.tid, req.params.index)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getThreadMetaValue = api => (req, res) => {
+  api.getThreadMetaValue(req.params.root, req.params.tid, req.params.index)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchThreadMessages = api => (req, res, next) => {
-  api.fetchThreadMessages(req.params.root, req.params.tid)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getThreadMessages = api => (req, res) => {
+  api.getThreadMessages(req.params.root, req.params.tid)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchThreadMessage = api => (req, res, next) => {
-  api.fetchThreadMessage(req.params.root, req.params.tid, req.params.mid)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getThreadMessage = api => (req, res) => {
+  api.getThreadMessage(req.params.root, req.params.tid, req.params.mid)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchThreadUsers = api => (req, res, next) => {
-  api.fetchThreadUsers(req.params.root, req.params.tid)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getThreadUsers = api => (req, res) => {
+  api.getThreadUsers(req.params.root, req.params.tid)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const fetchThreadUser = api => (req, res, next) => {
-  api.fetchThreadUser(req.params.root, req.params.tid, req.params.uid)
-    .then(data => (data && res.json(data) || res.sendStatus(404), next()))
-    .catch(err => (res.send(err.message || err), next()))
+const getThreadUser = api => (req, res) => {
+  api.getThreadUser(req.params.root, req.params.tid, req.params.uid)
+    .first().subscribe(
+      data => data != null && res.json(data) || res.sendStatus(404),
+      err => res.send(err.message || err)
+    )
 }
 
-const setThreadMeta = api => (req, res, next) => {
+const setThreadMeta = api => (req, res) => {
   api.setThreadMeta(req.params.root, req.params.tid, req.body)
-    .then(() => (res.sendStatus(200), next()))
-    .catch(() => (res.sendStatus(500), next()))
+    .then(() => res.sendStatus(200))
+    .catch(() => res.sendStatus(500))
 }
 
-const deleteThreadMessage = api => (req, res, next) => {
+const deleteThreadMessage = api => (req, res) => {
   api.deleteThreadMessage(req.params.root, req.params.tid, req.params.mid)
-    .then(() => (res.sendStatus(200), next()))
-    .catch(() => (res.sendStatus(500), next()))
+    .then(() => res.sendStatus(200))
+    .catch(() => res.sendStatus(500))
 }
 
-const deleteThreadUser = api => (req, res, next) => {
+const deleteThreadUser = api => (req, res) => {
   api.deleteThreadUser(req.params.root, req.params.tid, req.params.uid)
-    .then(() => (res.sendStatus(200), next()))
-    .catch(() => (res.sendStatus(500), next()))
+    .then(() => res.sendStatus(200))
+    .catch(() => res.sendStatus(500))
 }
 
-const deleteThread = api => (req, res, next) => {
+const deleteThread = api => (req, res) => {
   api.deleteThread(req.params.root, req.params.tid)
-    .then(() => (res.sendStatus(200), next()))
-    .catch(() => (res.sendStatus(500), next()))
+    .then(() => res.sendStatus(200))
+    .catch(() => res.sendStatus(500))
 }
 
 module.exports = api => {
   return {
-    fetchThreads: fetchThreads(api),
-    fetchPublicThreads: fetchPublicThreads(api),
-    fetchThread: fetchThread(api),
-    fetchThreadMeta: fetchThreadMeta(api),
-    fetchThreadMetaValue: fetchThreadMetaValue(api),
-    fetchThreadMessages: fetchThreadMessages(api),
-    fetchThreadMessage: fetchThreadMessage(api),
-    fetchThreadUsers: fetchThreadUsers(api),
-    fetchThreadUser: fetchThreadUser(api),
+    getThreads: getThreads(api),
+    getPublicThreads: getPublicThreads(api),
+    getThread: getThread(api),
+    getThreadMeta: getThreadMeta(api),
+    getThreadMetaValue: getThreadMetaValue(api),
+    getThreadMessages: getThreadMessages(api),
+    getThreadMessage: getThreadMessage(api),
+    getThreadUsers: getThreadUsers(api),
+    getThreadUser: getThreadUser(api),
     setThreadMeta: setThreadMeta(api),
     deleteThreadMessage: deleteThreadMessage(api),
     deleteThreadUser: deleteThreadUser(api),
