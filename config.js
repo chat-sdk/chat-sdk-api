@@ -1,4 +1,4 @@
 module.exports = {
-  pushEnabled: false,
+  pushEnabled: true,
   api: require('./firebase/api')()
 }

@@ -8,7 +8,7 @@ const ip = require('ip')
 const cors = require('./cors')
 const config = require('./config')
 
-// Setup routes with the Firebase API
+// Setup routes with the API specified in config.js
 const users = require('./routes/users')(config.api.users)
 const threads = require('./routes/threads')(config.api.threads)
 const moderation = require('./routes/moderation')(config.api.moderation)
