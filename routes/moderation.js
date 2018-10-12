@@ -1,19 +1,15 @@
 'use strict'
 
+const getHandler = require('./get-handler')
+
 const getFlaggedMessages = api => (req, res) => {
   api.getFlaggedMessages(req.params.root)
-    .first().subscribe(
-      data => data != null && res.json(data) || res.sendStatus(404),
-      err => res.send(err.message || err)
-    )
+    .first().subscribe(getHandler(res))
 }
 
 const getFlaggedMessage = api => (req, res) => {
   api.getFlaggedMessage(req.params.root, req.params.mid)
-    .first().subscribe(
-      data => data != null && res.json(data) || res.sendStatus(404),
-      err => res.send(err.message || err)
-    )
+    .first().subscribe(getHandler(res))
 }
 
 const flagMessage = api => (req, res) => {

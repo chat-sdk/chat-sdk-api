@@ -1,77 +1,50 @@
 'use strict'
 
-const { first } = require('rxjs/operators')
+const getHandler = require('./get-handler')
 
 const getThreads = api => (req, res) => {
   api.getThreads(req.params.root)
-    .first().subscribe(
-      data => data && res.json(data) || res.sendStatus(404),
-      err => res.send(err.message || err)
-    )
+    .first().subscribe(getHandler(res))
 }
 
 const getPublicThreads = api => (req, res) => {
   api.getPublicThreads(req.params.root)
-    .first().subscribe(
-      data => data != null && res.json(data) || res.sendStatus(404),
-      err => res.send(err.message || err)
-    )
+    .first().subscribe(getHandler(res))
 }
 
 const getThread = api => (req, res) => {
   api.getThread(req.params.root, req.params.tid)
-    .first().subscribe(
-      data => data != null && res.json(data) || res.sendStatus(404),
-      err => res.send(err.message || err)
-    )
+    .first().subscribe(getHandler(res))
 }
 
 const getThreadMeta = api => (req, res) => {
   api.getThreadMeta(req.params.root, req.params.tid)
-    .first().subscribe(
-      data => data != null && res.json(data) || res.sendStatus(404),
-      err => res.send(err.message || err)
-    )
+    .first().subscribe(getHandler(res))
 }
 
 const getThreadMetaValue = api => (req, res) => {
   api.getThreadMetaValue(req.params.root, req.params.tid, req.params.index)
-    .first().subscribe(
-      data => data != null && res.json(data) || res.sendStatus(404),
-      err => res.send(err.message || err)
-    )
+    .first().subscribe(getHandler(res))
 }
 
 const getThreadMessages = api => (req, res) => {
   api.getThreadMessages(req.params.root, req.params.tid)
-    .first().subscribe(
-      data => data != null && res.json(data) || res.sendStatus(404),
-      err => res.send(err.message || err)
-    )
+    .first().subscribe(getHandler(res))
 }
 
 const getThreadMessage = api => (req, res) => {
   api.getThreadMessage(req.params.root, req.params.tid, req.params.mid)
-    .first().subscribe(
-      data => data != null && res.json(data) || res.sendStatus(404),
-      err => res.send(err.message || err)
-    )
+    .first().subscribe(getHandler(res))
 }
 
 const getThreadUsers = api => (req, res) => {
   api.getThreadUsers(req.params.root, req.params.tid)
-    .first().subscribe(
-      data => data != null && res.json(data) || res.sendStatus(404),
-      err => res.send(err.message || err)
-    )
+    .first().subscribe(getHandler(res))
 }
 
 const getThreadUser = api => (req, res) => {
   api.getThreadUser(req.params.root, req.params.tid, req.params.uid)
-    .first().subscribe(
-      data => data != null && res.json(data) || res.sendStatus(404),
-      err => res.send(err.message || err)
-    )
+    .first().subscribe(getHandler(res))
 }
 
 const setThreadMeta = api => (req, res) => {
