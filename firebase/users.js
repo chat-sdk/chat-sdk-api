@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = ({ db, get }) => {
-  const getOnline =  root => {
+  const getOnline = root => {
     return get(db.ref(root + '/online'))
   }
 
@@ -9,10 +9,13 @@ module.exports = ({ db, get }) => {
     return get(db.ref(root + '/users'))
   }
 
-  const getUsersByMetaValue = async (root, index, value) => {
-    const ref = db.ref(root + '/users')
-    const snapshot = await ref.orderByChild('meta/' + index).equalTo(value).once('value')
-    return snapshot.val()
+  const getUsersByMetaValue = (root, index, value) => {
+    return Observable.create(o => {
+      const ref = db.ref(root + '/users')
+      ref.orderByChild('meta/' + index).equalTo(value).on('value', snapshot => {
+        o.next(snapshot.val())
+      })
+    })
   }
 
   const getUser = (root, uid) => {
