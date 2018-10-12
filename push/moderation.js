@@ -7,13 +7,13 @@ module.exports = pushHandler => api => {
   router.post('/', (req, res) => {
     const observable = api.getFlaggedMessages(req.params.root)
     observable.first().subscribe(getHandler(res))
-    observable.subscribe(pushHandler(req))
+    observable.subscribe(pushHandler(req, '/flagged-messages'))
   })
 
   router.post('/:mid', (req, res) => {
     const observable = api.getFlaggedMessage(req.params.root, req.params.mid)
     observable.first().subscribe(getHandler(res))
-    observable.subscribe(pushHandler(req))
+    observable.subscribe(pushHandler(req, '/flagged-messages/' + req.params.mid))
   })
 
   return router

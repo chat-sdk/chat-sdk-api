@@ -8,11 +8,12 @@ const threads = require('./threads')
 const moderation = require('./moderation')
 const getHandler = require('../routes/get-handler')
 
-const createPushHandler = webpush => req => ({
+const createPushHandler = webpush => (req, path) => ({
   next: data => {
     if (data != null) {
       if (req.body) {
-        webpush.sendNotification(req.body, JSON.stringify(data))
+        const body = { data, path: req.params.root + path }
+        webpush.sendNotification(req.body, JSON.stringify(body))
           .catch(err => console.error('Webpush error:', err))
       } else {
         console.error('Webpush error: req.body is undefined')
@@ -34,13 +35,13 @@ module.exports = api => {
   router.post('/subscribe/:root/online', (req, res) => {
     const observable = api.users.getOnline(req.params.root)
     observable.first().subscribe(getHandler(res))
-    observable.subscribe(pushHandler(req))
+    observable.subscribe(pushHandler(req, '/online'))
   })
 
   router.post('/subscribe/:root/public-threads', (req, res) => {
     const observable = api.threads.getPublicThreads(req.params.root)
     observable.first().subscribe(getHandler(res))
-    observable.subscribe(pushHandler(req))
+    observable.subscribe(pushHandler(req, '/public-threads'))
   })
 
   return router
