@@ -1,14 +1,19 @@
 'use strict'
 
 const router = require('express').Router({ mergeParams: true })
+const getHandler = require('../routes/get-handler')
 
-module.exports = handler => api => {
+module.exports = pushHandler => api => {
   router.post('/', (req, res) => {
-    api.getFlaggedMessages(req.params.root).subscribe(handler(req, res))
+    const observable = api.getFlaggedMessages(req.params.root)
+    observable.first().subscribe(getHandler(res))
+    observable.subscribe(pushHandler(req))
   })
 
   router.post('/:mid', (req, res) => {
-    api.getFlaggedMessage(req.params.root, req.params.mid).subscribe(handler(req, res))
+    const observable = api.getFlaggedMessage(req.params.root, req.params.mid)
+    observable.first().subscribe(getHandler(res))
+    observable.subscribe(pushHandler(req))
   })
 
   return router
